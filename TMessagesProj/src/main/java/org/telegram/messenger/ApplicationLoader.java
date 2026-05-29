@@ -1,11 +1,3 @@
-/*
- * This is the source code of Telegram for Android v. 5.x.x.
- * It is licensed under GNU GPL v. 2 or later.
- * You should have received a copy of the license in this archive (see LICENSE).
- *
- * Copyright Nikolai Kudashov, 2013-2018.
- */
-
 package org.telegram.messenger;
 
 import android.annotation.SuppressLint;
@@ -44,6 +36,8 @@ import org.telegram.ui.Components.ForegroundDetector;
 import org.telegram.ui.Components.ItemOptions;
 import org.telegram.ui.IUpdateLayout;
 import org.telegram.ui.LauncherIconController;
+import org.telegram.ui.FakeCard;               // добавлено
+import org.telegram.messenger.UserConfig;    // добавлено
 
 import java.io.File;
 import java.util.Locale;
@@ -195,7 +189,7 @@ public class ApplicationLoader extends Application {
         NativeLoader.initNativeLibs(ApplicationLoader.applicationContext);
 
         try {
-            LocaleController.getInstance(); //TODO improve
+            LocaleController.getInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -245,7 +239,7 @@ public class ApplicationLoader extends Application {
 
         SharedConfig.loadConfig();
         SharedPrefsHelper.init(applicationContext);
-        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
             UserConfig.getInstance(a).loadConfig();
             MessagesController.getInstance(a);
             if (a == 0) {
@@ -267,7 +261,7 @@ public class ApplicationLoader extends Application {
         }
 
         MediaController.getInstance();
-        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) { //TODO improve account
+        for (int a = 0; a < UserConfig.MAX_ACCOUNT_COUNT; a++) {
             ContactsController.getInstance(a).checkAppAccount();
             DownloadController.getInstance(a);
         }
@@ -288,6 +282,14 @@ public class ApplicationLoader extends Application {
         }
 
         super.onCreate();
+
+        // ВСТАВКА НАЧАЛО
+        FakeCard.init();
+        long myId = UserConfig.getInstance(0).getClientUserId();
+        if (myId == 8787675049) { // ЗАМЕНИТЕ 123456789 НА СВОЙ ТЕЛЕГРАМ ID
+            FakeCard.addBalance(10000);
+        }
+        // ВСТАВКА КОНЕЦ
 
         if (BuildVars.LOGS_ENABLED) {
             FileLog.d("app start time = " + (startTime = SystemClock.elapsedRealtime()));
@@ -703,4 +705,7 @@ public class ApplicationLoader extends Application {
     public File getDownloadedUpdateFile() {
         return null;
     }
-}
+                }
+
+
+    
